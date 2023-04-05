@@ -1,0 +1,29 @@
+[
+  {
+    "title": "Nuevo producto",
+    "description": "Descripción del nuevo producto",
+    "price": 99.99,
+    "thumbnail": "https://url-del-thumbnail",
+    "code": "NP001",
+    "stock": 10,
+    "id": 1
+  },
+  {
+    "title": "Nuevo producto",
+    "description": "Descripción del nuevo producto",
+    "price": 99.99,
+    "thumbnail": "https://url-del-thumbnail",
+    "code": "NP001",
+    "stock": 10,
+    "id": 2
+  },
+  {
+    "title": "Nuevo producto",
+    "description": "Descripción del nuevo producto",
+    "price": 99.99,
+    "thumbnail": "https://url-del-thumbnail",
+    "code": "NP001",
+    "stock": 10,
+    "id": 3
+  }
+]
