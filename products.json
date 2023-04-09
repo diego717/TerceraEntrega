@@ -1,0 +1,35 @@
+[
+  {
+    "id": "544",
+    "title": "Producto de prueba",
+    "description": "Este es un producto de prueba",
+    "code": "123956",
+    "price": 99.99,
+    "status": true,
+    "stock": 10,
+    "category": "Prueba",
+    "thumbnails": []
+  },
+  {
+    "id": "368",
+    "title": "Producto de prueba",
+    "description": "Este es un producto de prueba",
+    "code": "12956",
+    "price": 99.99,
+    "status": true,
+    "stock": 10,
+    "category": "Prueba",
+    "thumbnails": []
+  },
+  {
+    "id": "667",
+    "title": "Producto de prueba",
+    "description": "Este es un producto de prueba",
+    "code": "212956",
+    "price": 99.99,
+    "status": true,
+    "stock": 10,
+    "category": "Prueba",
+    "thumbnails": []
+  }
+]

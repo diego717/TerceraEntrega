@@ -3,12 +3,13 @@ import { Router } from 'express';
 
 const router = Router();
 const productsFilePath = './products.json';
-let products = [];
 
 // Mostrar todos los productos
 router.get('/', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 10; 
+    const productsFile = await fs.readFile(productsFilePath);
+    const products = JSON.parse(productsFile);
     const filteredProducts = products.slice(0, limit);
     res.json(filteredProducts);
   } catch (error) {
@@ -38,10 +39,21 @@ router.post('/', async (req, res) => {
     if (!title || !description || !code || !price || !stock || !category) {
       return res.status(400).json({ message: 'Faltan campos obligatorios' });
     }
-    const id = Math.floor(Math.random() * 1000).toString(); // Generate random id
+    const id = Math.floor(Math.random() * 1000).toString(); // Generar id random
     const newProduct = { id, title, description, code, price, status: true, stock, category, thumbnails };
+
+    // Leer el contenido del archivo JSON en una variable
+    const productsFile = await fs.readFile(productsFilePath, 'utf-8');
+
+    // Parsear el contenido del archivo JSON a un objeto
+    const products = JSON.parse(productsFile);
+
+    // Agregar el nuevo producto al objeto
     products.push(newProduct);
-    fs.writeFileSync(productsFilePath, JSON.stringify(products));
+
+    // Escribir el objeto actualizado al archivo JSON
+    await fs.writeFile(productsFilePath, JSON.stringify(products));
+
     res.status(201).json({ message: 'Producto creado satisfactoriamente', product: newProduct });
   } catch (err) {
     console.error(err);
@@ -54,7 +66,7 @@ router.put('/:pid', async (req, res) => {
     try {
       const pid = req.params.pid;
       const updatedProduct = req.body;
-      let products = JSON.parse(fs.readFileSync(productsFilePath));
+      let products = JSON.parse(fs.readFile(productsFilePath));
   
       const index = products.findIndex((product) => product.id == pid);
   
@@ -66,7 +78,7 @@ router.put('/:pid', async (req, res) => {
       const newProduct = { ...oldProduct, ...updatedProduct, id: oldProduct.id };
   
       products[index] = newProduct;
-      fs.writeFileSync(productsFilePath, JSON.stringify(products));
+      fs.writeFile(productsFilePath, JSON.stringify(products));
       res.status(200).json({ message: `Producto con el id: ${pid} actualizado satisfactoriamente`, product: newProduct });
     } catch (err) {
       console.error(err);
@@ -79,7 +91,7 @@ router.put('/:pid', async (req, res) => {
 router.delete('/:pid', async (req, res) => {
   try {
     const pid = req.params.pid;
-    let products = JSON.parse(fs.readFileSync(productsFilePath));
+    let products = JSON.parse(fs.readFile(productsFilePath));
 
     const index = products.findIndex((product) => product.id == pid);
 
@@ -88,7 +100,7 @@ router.delete('/:pid', async (req, res) => {
     }
 
     products.splice(index, 1);
-    fs.writeFileSync(productsFilePath, JSON.stringify(products));
+    fs.writeFile(productsFilePath, JSON.stringify(products));
     res.status(200).json({ message: `Producto con el id: ${pid} borrado satisfactoriamente` });
   } catch (err) {
     console.error(err);

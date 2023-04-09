@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { promises as fs } from 'fs';
 import { Router } from 'express'
 
 const cartRoutePath = './carrito.json';
@@ -43,7 +43,7 @@ router.get('/:cid', async (req, res) => {
     const carts = JSON.parse(cartsFile);
     
     // Buscamos el carrito que tenga el id proporcionado en la ruta
-    const cart = carts.find(c => c.id === req.params.cid);
+    const cart = carts.filter(c => c.id === req.params.cid)[0];
     if (!cart) {
       return res.status(404).send('Carrito no encontrado');
     }
@@ -54,33 +54,35 @@ router.get('/:cid', async (req, res) => {
     res.status(500).send('Error de servidor');
   }
 });
-
+const updateCartsFile = (cartsData) => {
+  fs.writeFileSync(cartRoutePath, JSON.stringify(cartsData, null, 2));
+};
 // Ruta para agregar un producto a un carrito
-router.post('/:cid/product/:pid', async (req, res) => {
+router.post('/:cid/products/:pid', async (req, res) => {
   try {
     const { cid, pid } = req.params;
     const quantity = req.body.quantity || 1;
 
-    const cartsFile = await fs.readFile('carrito.json');
+    const cartsFile = await fs.readFile('./carrito.json', 'utf8');
     const carts = JSON.parse(cartsFile);
     
     // Buscamos el carrito que tenga el id proporcionado en la ruta
-    const cart = carts.find(c => c.id === cid);
+    const cart = carts.filter(c => c.id === cid);
     if (!cart) {
       return res.status(404).send('Carrito no encontrado');
     }
 
-    const productsFile = await fs.readFile('productos.json');
+    const productsFile = await fs.readFile('./products.json', 'utf-8');
     const products = JSON.parse(productsFile);
     
     // Buscamos el producto que tenga el id proporcionado en la ruta
-    const product = products.find(p => p.id === pid);
+    const product = products.filter(p => p.id === pid);
     if (!product) {
       return res.status(404).send('Producto no encontrado');
     }
 
     // Verificamos si el producto ya existe en el carrito
-    const existingProduct = cart.products.find(p => p.product === pid);
+    const existingProduct = cart.products.filter(p => p.product === pid);
     if (existingProduct) {
       // Si el producto ya existe, incrementamos la cantidad
       existingProduct.quantity += quantity;
@@ -92,8 +94,8 @@ router.post('/:cid/product/:pid', async (req, res) => {
       });
     }
 
-    // Escribimos los cambios en el archivo carrito.json
-    await fs.writeFile('carrito.json', JSON.stringify(carts));
+    // Actualizamos el archivo carrito.json con los cambios
+    updateCartsFile(carts);
 
     res.json(cart.products);
   } catch (error) {
@@ -101,5 +103,6 @@ router.post('/:cid/product/:pid', async (req, res) => {
     res.status(500).send('Error de servidor');
   }
 });
+
 
 export default router;
