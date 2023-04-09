@@ -1,43 +1,21 @@
 import express from 'express';
+import productsRoute from './src/routes/productsRoute.js';
+import cartRoute from './src/routes/cartRoute.js';
 import ProductManager from './src/components/productManager.js';
 
-const port = 3000;
+const port = 8080;
 const app = express();
 
 const productManager = new ProductManager('./products.json');
 
+app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
-// Endpoint para obtener todos los productos
-app.get('/products', async (req, res) => {
-  try {
-    const limit = req.query.limit;
-    const products = await productManager.getProducts();
-    if (limit) {
-      res.json(products.slice(0, limit));
-    } else {
-      res.json(products);
-    }
-  } catch (error) {
-    res.status(500).send('Error obteniendo productos');
-  }
-});
 
-// Endpoint para obtener un producto por su ID
-app.get('/products/:pid', async (req, res) => {
-  try {
-    const id = parseInt(req.params.pid);
-    const product = await productManager.getProductById(id);
-    if (product) {
-      res.json(product);
-    } else {
-      res.status(404).send('Producto no encontrado');
-    }
-  } catch (error) {
-    res.status(500).send('Error obteniendo producto');
-  }
-});
 
 app.listen(port, () => {
   console.log(`Servidor iniciado en http://localhost:${port}`);
 });
+
+app.use("/api/products", productsRoute);
+app.use("/api/carts", cartRoute);
